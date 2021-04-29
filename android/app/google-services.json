@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "410370976079",
+    "project_id": "evolution-cup",
+    "storage_bucket": "evolution-cup.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:410370976079:android:521eb637d560620f6a3d3a",
+        "android_client_info": {
+          "package_name": "com.evolution.cup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "410370976079-r221tfrcd20jlb7ttsbhqq8gv76h542c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.evolution.cup",
+            "certificate_hash": "4d8cb7d04de73bd964421d5ede8a910fb8da891c"
+          }
+        },
+        {
+          "client_id": "410370976079-bakdpu7l7ha017rpt6tbh87ut9ore4sc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDA9N37boD8b5j6AfO-WLQvExW5gZ2OIXs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "410370976079-bakdpu7l7ha017rpt6tbh87ut9ore4sc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
