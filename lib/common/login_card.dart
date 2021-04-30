@@ -14,7 +14,7 @@ class LoginCard extends StatelessWidget {
             children: <Widget>[
               Icon(
                 Icons.account_circle,
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).accentColor,
                 size: 100,
               ),
               Padding(
@@ -25,16 +25,14 @@ class LoginCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
-                    color: Theme.of(context).primaryColor,
+                    color: Theme.of(context).accentColor,
                   ),
                 ),
               ),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: (){
                   Navigator.of(context).pushNamed('/login');
                 },
-                color: Theme.of(context).primaryColor,
-                textColor: Colors.white,
                 child: const Text(
                     'LOGIN'
                 ),

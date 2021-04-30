@@ -1,7 +1,7 @@
-import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
+import * as functions from "firebase-functions";
+import * as admin from "firebase-admin";
 
-import { CieloConstructor, Cielo, TransactionCreditCardRequestModel, EnumBrands, CaptureRequestModel, CancelTransactionRequestModel} from 'cielo';
+import { CieloConstructor, Cielo, TransactionCreditCardRequestModel, EnumBrands, CaptureRequestModel, CancelTransactionRequestModel } from "cielo";
 
 admin.initializeApp(functions.config().firebase);
 
@@ -14,14 +14,14 @@ const merchantKey = functions.config().cielo.merchantkey;
 const cieloParams: CieloConstructor = {
     merchantId: merchantId,
     merchantKey: merchantKey,
-    sandbox: false,
-    debug: false,
+    sandbox: true,
+    debug: true,
 }
 
 const cielo = new Cielo(cieloParams);
 
 export const authorizeCreditCard = functions.https.onCall(async (data, context) => {
-    if(data === null){
+    if (data === null) {
         return {
             "success": false,
             "error": {
@@ -31,7 +31,7 @@ export const authorizeCreditCard = functions.https.onCall(async (data, context) 
         };
     }
 
-    if(!context.auth){
+    if (!context.auth) {
         return {
             "success": false,
             "error": {
@@ -49,7 +49,7 @@ export const authorizeCreditCard = functions.https.onCall(async (data, context) 
     console.log("Iniciando Autorização");
 
     let brand: EnumBrands;
-    switch(data.creditCard.brand){
+    switch (data.creditCard.brand) {
         case "VISA":
             brand = EnumBrands.VISA;
             break;
@@ -89,22 +89,22 @@ export const authorizeCreditCard = functions.https.onCall(async (data, context) 
         customer: {
             name: userData.name,
             identity: data.cpf,
-            identityType: 'CPF',
+            identityType: "CPF",
             email: userData.email,
             deliveryAddress: {
                 street: userData.address.street,
                 number: userData.address.number,
                 complement: userData.address.complement,
-                zipCode: userData.address.zipCode.replace('.', '').replace('-', ''),
+                zipCode: userData.address.zipCode.replace(".", "").replace("-", ""),
                 city: userData.address.city,
                 state: userData.address.state,
-                country: 'BRA',
+                country: "BRA",
                 district: userData.address.district,
             }
         },
         payment: {
-            currency: 'BRL',
-            country: 'BRA',
+            currency: "BRL",
+            country: "BRA",
             amount: data.amount,
             installments: data.installments,
             softDescriptor: data.softDescriptor.substring(0, 13),
@@ -123,31 +123,31 @@ export const authorizeCreditCard = functions.https.onCall(async (data, context) 
     try {
         const transaction = await cielo.creditCard.transaction(saleData);
 
-        if(transaction.payment.status === 1){
+        if (transaction.payment.status === 1) {
             return {
                 "success": true,
                 "paymentId": transaction.payment.paymentId
             }
         } else {
-            let message = '';
-            switch(transaction.payment.returnCode) {
-                case '5':
-                    message = 'Não Autorizada';
+            let message = "";
+            switch (transaction.payment.returnCode) {
+                case "5":
+                    message = "Não Autorizada";
                     break;
-                case '57':
-                    message = 'Cartão expirado';
+                case "57":
+                    message = "Cartão expirado";
                     break;
-                case '78':
-                    message = 'Cartão bloqueado';
+                case "78":
+                    message = "Cartão bloqueado";
                     break;
-                case '99':
-                    message = 'Timeout';
+                case "99":
+                    message = "Timeout";
                     break;
-                case '77':
-                    message = 'Cartão cancelado';
+                case "77":
+                    message = "Cartão cancelado";
                     break;
-                case '70':
-                    message = 'Problemas com o Cartão de Crédito';
+                case "70":
+                    message = "Problemas com o Cartão de Crédito";
                     break;
                 default:
                     message = transaction.payment.returnMessage;
@@ -162,7 +162,7 @@ export const authorizeCreditCard = functions.https.onCall(async (data, context) 
                 }
             }
         }
-    } catch (error){
+    } catch (error) {
         console.log("Error ", error);
         return {
             "success": false,
@@ -176,7 +176,7 @@ export const authorizeCreditCard = functions.https.onCall(async (data, context) 
 });
 
 export const captureCreditCard = functions.https.onCall(async (data, context) => {
-    if(data === null){
+    if (data === null) {
         return {
             "success": false,
             "error": {
@@ -186,7 +186,7 @@ export const captureCreditCard = functions.https.onCall(async (data, context) =>
         };
     }
 
-    if(!context.auth){
+    if (!context.auth) {
         return {
             "success": false,
             "error": {
@@ -202,9 +202,9 @@ export const captureCreditCard = functions.https.onCall(async (data, context) =>
 
     try {
         const capture = await cielo.creditCard.captureSaleTransaction(captureParams);
-        
-        if(capture.status === 2){
-            return {"success": true};
+
+        if (capture.status === 2) {
+            return { "success": true };
         } else {
             return {
                 "success": false,
@@ -215,7 +215,7 @@ export const captureCreditCard = functions.https.onCall(async (data, context) =>
                 }
             };
         }
-    } catch (error){
+    } catch (error) {
         console.log("Error ", error);
         return {
             "success": false,
@@ -229,7 +229,7 @@ export const captureCreditCard = functions.https.onCall(async (data, context) =>
 });
 
 export const cancelCreditCard = functions.https.onCall(async (data, context) => {
-    if(data === null){
+    if (data === null) {
         return {
             "success": false,
             "error": {
@@ -239,7 +239,7 @@ export const cancelCreditCard = functions.https.onCall(async (data, context) => 
         };
     }
 
-    if(!context.auth){
+    if (!context.auth) {
         return {
             "success": false,
             "error": {
@@ -255,9 +255,9 @@ export const cancelCreditCard = functions.https.onCall(async (data, context) => 
 
     try {
         const cancel = await cielo.creditCard.cancelTransaction(cancelParams);
-        
-        if(cancel.status === 10 || cancel.status === 11){
-            return {"success": true};
+
+        if (cancel.status === 10 || cancel.status === 11) {
+            return { "success": true };
         } else {
             return {
                 "success": false,
@@ -268,7 +268,7 @@ export const cancelCreditCard = functions.https.onCall(async (data, context) => 
                 }
             };
         }
-    } catch (error){
+    } catch (error) {
         console.log("Error ", error);
         return {
             "success": false,
@@ -284,11 +284,11 @@ export const cancelCreditCard = functions.https.onCall(async (data, context) => 
 
 
 export const helloWorld = functions.https.onCall((data, context) => {
-  return {data: "Hellow from Cloud Functions!!!"};
+    return { data: "Hellow from Cloud Functions!!!" };
 });
 
-export const getUserData = functions.https.onCall( async (data, context) => {
-    if(!context.auth){
+export const getUserData = functions.https.onCall(async (data, context) => {
+    if (!context.auth) {
         return {
             "data": "Nenhum usuário logado"
         };
@@ -305,60 +305,98 @@ export const getUserData = functions.https.onCall( async (data, context) => {
     };
 });
 
-export const addMessage = functions.https.onCall( async (data, context) => {
+export const addMessage = functions.https.onCall(async (data, context) => {
     console.log(data);
 
     const snapshot = await admin.firestore().collection("messages").add(data);
 
-    return {"success": snapshot.id};
+    return { "success": snapshot.id };
 });
 
-export const onNewOrder = functions.firestore.document("/orders/{orderId}").onCreate(async (snapshot, context) => {
+export const onNewOrder = functions.firestore.document("companies/QFZGXJuTGPNyAMq7okrL/orders/{orderId}").onCreate(async (snapshot, context) => {
     const orderId = context.params.orderId;
-    
-    const querySnapshot = await admin.firestore().collection("admins").get();
+    // let admins: string[] = [];
+    // const querySnapshot = await admin.firestore().collection("users").where('companiesAdmin', 'array-contains', "QFZGXJuTGPNyAMq7okrL").get();
+    // const admins = querySnapshot.docs.map(doc => doc.id);
+    // const documentSnapshot = await admin.firestore().collection("companies").doc('QFZGXJuTGPNyAMq7okrL').collection('admins').get();
+    // let data = ds.data();
+    // let interested: Map<string, boolean> = data["interested"];
+    // console.log(Array.from(interested.keys());
+    // console.log(interested);
 
-    const admins = querySnapshot.docs.map(doc => doc.id);
+    // const safeObject = documentSnapshot.data() || []; // because it might be undefined
+    // let docMap: Map<string, object> = new Map(Object.entries(safeObject));
+    // const querySnapshot = await admin.firestore().collection("companies").doc('QFZGXJuTGPNyAMq7okrL').collection('admins').get();
+    // admins = querySnapshot.docs.map(doc => doc.id);
+
+    // admins = docMap.admins;//.data().admins;
+
+    type Company = {
+        admins: string[] | undefined;
+    };
+
+    const converter = {
+        toFirestore: (data: Company) => data,
+        fromFirestore: (snap: FirebaseFirestore.QueryDocumentSnapshot) =>
+            snap.data() as Company
+    }
+    const documentSnapshot = await admin.firestore().collection("companies").withConverter(converter).doc('QFZGXJuTGPNyAMq7okrL').get();
+
+    const company = documentSnapshot.data()
+
+    let admins = company?.admins as string[];
 
     let adminsTokens: string[] = [];
-    for(let i = 0; i < admins.length; i++){
+    for (let i = 0; i < admins.length; i++) {
         const tokensAdmin: string[] = await getDeviceTokens(admins[i]);
         adminsTokens = adminsTokens.concat(tokensAdmin);
-    }
 
+        if (tokensAdmin !== null) {
+            const payload = getNotificationObject("Novo Pedido",
+                "Nova venda realizada. Pedido: " + orderId,
+                "onNewOrder");
+            await admin.firestore().collection("users").doc(admins[i]).collection("notifications").add(payload);
+        }
+    }
     await sendPushFCM(
         adminsTokens,
-        'Novo Pedido',
-        'Nova venda realizada. Pedido: ' + orderId
+        "Novo Pedido",
+        "Nova venda realizada. Pedido: " + orderId,
+        "onNewOrder"
     );
 });
 
 const orderStatus = new Map([
     [0, "Cancelado"],
-    [1, "Em Aberto"],
-    [2, "Em Progresso"],
-    [3, "Finalizado"]
-    // [1, "Em Preparação"],
-    // [2, "Em Transporte"],
-    // [3, "Entregue"]
+    [1, "Em Preparação"],
+    [2, "Em Transporte"],
+    [3, "Entregue"]
 ])
 
-export const onOrderStatusChanged = functions.firestore.document("/orders/{orderId}").onUpdate(async (snapshot, context) => {
+export const onOrderStatusChanged = functions.firestore.document("companies/QFZGXJuTGPNyAMq7okrL/orders/{orderId}").onUpdate(async (snapshot, context) => {
     const beforeStatus = snapshot.before.data().status;
     const afterStatus = snapshot.after.data().status;
 
-    if(beforeStatus !== afterStatus){
+    if (beforeStatus !== afterStatus) {
         const tokensUser = await getDeviceTokens(snapshot.after.data().user)
+
+        if (tokensUser !== null) {
+            const payload = getNotificationObject("Pedido: " + context.params.orderId,
+                "Status atualizado para: " + orderStatus.get(afterStatus),
+                "onOrderStatusChanged");
+            await admin.firestore().collection("users").doc(snapshot.after.data().user).collection("notifications").add(payload);
+        }
 
         await sendPushFCM(
             tokensUser,
-            'Pedido: ' + context.params.orderId,
-            'Status atualizado para: ' + orderStatus.get(afterStatus),
+            "Pedido: " + context.params.orderId,
+            "Status atualizado para: " + orderStatus.get(afterStatus),
+            "onOrderStatusChanged"
         )
     }
 });
 
-async function getDeviceTokens(uid: string){
+async function getDeviceTokens(uid: string) {
     const querySnapshot = await admin.firestore().collection("users").doc(uid).collection("tokens").get();
 
     const tokens = querySnapshot.docs.map(doc => doc.id);
@@ -366,13 +404,26 @@ async function getDeviceTokens(uid: string){
     return tokens;
 }
 
-async function sendPushFCM(tokens: string[], title: string, message: string){
-    if(tokens.length > 0){
+async function getNotificationObject(title: string, message: string, notificationType: string) {
+    const payload = {
+        notification: {
+            title: title,
+            body: message,
+            notificationType: notificationType,
+            click_action: "FLUTTER_NOTIFICATION_CLICK"
+        }
+    };
+    return payload;
+}
+
+async function sendPushFCM(tokens: string[], title: string, message: string, notificationType: string) {
+    if (tokens.length > 0) {
         const payload = {
             notification: {
                 title: title,
                 body: message,
-                click_action: 'FLUTTER_NOTIFICATION_CLICK'
+                notificationType: notificationType,
+                click_action: "FLUTTER_NOTIFICATION_CLICK"
             }
         };
         return admin.messaging().sendToDevice(tokens, payload);

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:evolutioncup/common/order/cancel_order_dialog.dart';
-import 'package:evolutioncup/common/order/export_address_dialog.dart';
-import 'package:evolutioncup/common/order/order_product_tile.dart';
-import 'package:evolutioncup/models/order.dart';
+import 'package:mewnu/common/order/cancel_order_dialog.dart';
+// import 'package:mewnu/common/order/export_address_dialog.dart';
+import 'package:mewnu/common/order/order_product_tile.dart';
+import 'package:mewnu/models/orders/order.dart';
 
 class OrderTile extends StatelessWidget {
-
   const OrderTile(this.order, {this.showControls = false});
 
   final Order order;
@@ -13,10 +12,8 @@ class OrderTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = Theme.of(context).primaryColor;
-
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: ExpansionTile(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -28,12 +25,12 @@ class OrderTile extends StatelessWidget {
                   order.formattedId,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: primaryColor,
+                    color: Theme.of(context).accentColor,
                   ),
                 ),
                 Text(
                   'R\$ ${order.price.toStringAsFixed(2)}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     color: Colors.black,
                     fontSize: 14,
@@ -44,54 +41,54 @@ class OrderTile extends StatelessWidget {
             Text(
               order.statusText,
               style: TextStyle(
-                fontWeight: FontWeight.w400,
-                color: order.status == Status.canceled ?
-                  Colors.red : primaryColor,
-                fontSize: 14
-              ),
+                  fontWeight: FontWeight.w400,
+                  color: order.status == Status.canceled
+                      ? Colors.red
+                      : Theme.of(context).accentColor,
+                  fontSize: 14),
             )
           ],
         ),
         children: <Widget>[
           Column(
-            children: order.items.map((e){
+            children: order.items.map((e) {
               return OrderProductTile(e);
             }).toList(),
           ),
-          if(showControls && order.status != Status.canceled)
+          if (showControls && order.status != Status.canceled)
             SizedBox(
               height: 50,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: <Widget>[
-                  FlatButton(
-                    onPressed: (){
+                  TextButton(
+                    onPressed: () {
                       showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (_) => CancelOrderDialog(order)
-                      );
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (_) => CancelOrderDialog(order));
                     },
-                    textColor: Colors.red,
-                    child: const Text('Cancelar'),
+                    child: const Text('Cancelar',
+                        style: TextStyle(
+                          color: Colors.red,
+                        )),
                   ),
-                  FlatButton(
+                  TextButton(
                     onPressed: order.back,
                     child: const Text('Recuar'),
                   ),
-                  FlatButton(
+                  TextButton(
                     onPressed: order.advance,
                     child: const Text('Avançar'),
                   ),
-                  FlatButton(
-                    onPressed: (){
-                      showDialog(context: context,
-                        builder: (_) => ExportAddressDialog(order.address)
-                      );
-                    },
-                    textColor: primaryColor,
-                    child: const Text('Endereço'),
-                  )
+                  // TextButton(
+                  //   onPressed: () {
+                  //     showDialog(context: context,
+                  //       builder: (_) => ExportAddressDialog(order.address)
+                  //     );
+                  //   },
+                  //   child: const Text('Endereço'),
+                  // )
                 ],
               ),
             )

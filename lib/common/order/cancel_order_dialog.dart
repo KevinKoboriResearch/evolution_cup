@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:evolutioncup/models/order.dart';
-
+import 'package:mewnu/models/orders/order.dart';
+import 'package:provider/provider.dart';
+import 'package:mewnu/models/companies/company.dart';
 class CancelOrderDialog extends StatefulWidget {
 
   const CancelOrderDialog(this.order);
@@ -18,6 +19,7 @@ class _CancelOrderDialogState extends State<CancelOrderDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final Company company = Provider.of(context, listen: false);
     return WillPopScope(
       onWillPop: () => Future.value(false),
       child: AlertDialog(
@@ -54,7 +56,7 @@ class _CancelOrderDialogState extends State<CancelOrderDialog> {
                 loading = true;
               });
               try {
-                await widget.order.cancel();
+                await widget.order.cancel(company.id);
                 Navigator.of(context).pop();
               } catch (e){
                 setState(() {

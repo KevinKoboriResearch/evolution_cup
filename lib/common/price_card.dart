@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:evolutioncup/models/cart_manager.dart';
+import 'package:mewnu/models/carts/cart_manager.dart';
 import 'package:provider/provider.dart';
 
 class PriceCard extends StatelessWidget {
-
-  const PriceCard({this.buttonText, this.onPressed});
+  const PriceCard({this.onPressed, this.buttonText, this.buttonColor});
 
   final String buttonText;
+  final Color buttonColor;
   final VoidCallback onPressed;
 
   @override
@@ -16,14 +16,14 @@ class PriceCard extends StatelessWidget {
     final deliveryPrice = cartManager.deliveryPrice;
     final totalPrice = cartManager.totalPrice;
 
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Text(
+            const Text(
               'Resumo do Pedido',
               textAlign: TextAlign.start,
               style: TextStyle(
@@ -31,7 +31,9 @@ class PriceCard extends StatelessWidget {
                 fontSize: 16,
               ),
             ),
-            const SizedBox(height: 12,),
+            const SizedBox(
+              height: 12,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -39,41 +41,63 @@ class PriceCard extends StatelessWidget {
                 Text('R\$ ${productsPrice.toStringAsFixed(2)}')
               ],
             ),
-            const Divider(),
-            if(deliveryPrice != null)
-              ...[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    const Text('Entrega'),
-                    Text('R\$ ${deliveryPrice.toStringAsFixed(2)}')
-                  ],
-                ),
-                const Divider(),
-              ],
-            const SizedBox(height: 12,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text('Total',
-                  style: TextStyle(fontWeight: FontWeight.w500),
-                ),
-                Text(
-                  'R\$ ${totalPrice.toStringAsFixed(2)}',
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontSize: 16,
-                  ),
-                )
-              ],
+            const SizedBox(
+              height: 4,
             ),
-            const SizedBox(height: 8,),
-            RaisedButton(
-              color: Theme.of(context).primaryColor,
-              disabledColor: Theme.of(context).primaryColor.withAlpha(100),
-              textColor: Colors.white,
+            const Divider(),
+            // if (deliveryPrice != null) ...[
+            //   Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //     children: <Widget>[
+            //       const Text('Entrega'),
+            //       Text('R\$ ${deliveryPrice.toStringAsFixed(2)}')
+            //     ],
+            //   ),
+            //   const Divider(),
+            // ],
+            // const SizedBox(
+            //   height: 12,
+            // ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: <Widget>[
+            //     const Text(
+            //       'Total',
+            //       style: TextStyle(fontWeight: FontWeight.w500),
+            //     ),
+            //     Text(
+            //       'R\$ ${totalPrice.toStringAsFixed(2)}',
+            //       style: TextStyle(
+            //         color: Theme.of(context).accentColor,
+            //         fontWeight: FontWeight.bold,
+            //         fontSize: 16,
+            //       ),
+            //     )
+            //   ],
+            // ),
+            // const SizedBox(
+            //   height: 8,
+            // ),
+            ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                  (Set<MaterialState> states) {
+                    return buttonColor;
+                  },
+                ),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(26.0),
+                  ),
+                ),
+              ),
               onPressed: onPressed,
-              child: Text(buttonText),
+              child: Text(
+                buttonText,
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+              ),
             ),
           ],
         ),
