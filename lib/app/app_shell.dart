@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:mewnu/router/app_state.dart';
-import 'package:mewnu/router/inner_router_delegate.dart';
+import 'package:mewnu/app/router/app_state.dart';
+import 'package:mewnu/app/router/inner_router_delegate.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mewnu/screens/user_orders/user_orders_screen.dart';
 import 'package:another_flushbar/flushbar.dart';

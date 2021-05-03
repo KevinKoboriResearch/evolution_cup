@@ -66,7 +66,7 @@ class _CancelOrderDialogState extends State<CancelOrderDialog> {
               }
             } : null,
             textColor: Colors.red,
-            child: const Text('Cancelar Pedido'),
+            child: const Text('Cancelar Inscrição'),
           ),
         ],
       ),

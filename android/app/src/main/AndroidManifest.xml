@@ -12,7 +12,7 @@ xmlns:tools="http://schemas.android.com/tools"
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="Mewnu"
+        android:label="Evolution Cup"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

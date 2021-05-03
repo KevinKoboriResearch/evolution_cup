@@ -16,7 +16,7 @@ class ConfirmationScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('Pedido Confirmado'),
+        title: const Text('Inscrição Confirmada'),
         centerTitle: true,
       ),
       body: SingleChildScrollView(

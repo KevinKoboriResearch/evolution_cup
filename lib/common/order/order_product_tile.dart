@@ -38,7 +38,7 @@ class OrderProductTile extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Medida: ${cartProduct.size}',
+                    'Modo: ${cartProduct.size}',
                     style: TextStyle(fontWeight: FontWeight.w300),
                   ),
                   // Text(

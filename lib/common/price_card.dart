@@ -24,7 +24,7 @@ class PriceCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             const Text(
-              'Resumo do Pedido',
+              'Resumo da Inscrição',
               textAlign: TextAlign.start,
               style: TextStyle(
                 fontWeight: FontWeight.w600,

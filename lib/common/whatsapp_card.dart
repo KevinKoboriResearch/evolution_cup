@@ -36,7 +36,7 @@ class WhatsappCard extends StatelessWidget {
       String produto = '';
       for (int i = 0; i < cartManager.items.length; i++) {
         produto += '- ${cartManager.items[i].product.name}\n' +
-            '  - Medida: ${cartManager.items[i].size}\n' +
+            '  - Modo: ${cartManager.items[i].size}\n' +
             '  - Valor: ${cartManager.items[i].unitPrice.toStringAsFixed(2)}\n' +
             '  - Quantidade: ${cartManager.items[i].quantity}\n';
       }
@@ -70,7 +70,7 @@ class WhatsappCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             const Text(
-              'Resumo do Pedido',
+              'Resumo da Inscrição',
               textAlign: TextAlign.start,
               style: TextStyle(
                 fontWeight: FontWeight.w600,
