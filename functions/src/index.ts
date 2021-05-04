@@ -5,9 +5,6 @@ import { CieloConstructor, Cielo, TransactionCreditCardRequestModel, EnumBrands,
 
 admin.initializeApp(functions.config().firebase);
 
-// Start writing Firebase Functions
-// https://firebase.google.com/docs/functions/typescript
-
 const merchantId = functions.config().cielo.merchantid;
 const merchantKey = functions.config().cielo.merchantkey;
 
@@ -281,12 +278,6 @@ export const cancelCreditCard = functions.https.onCall(async (data, context) => 
 
 });
 
-
-
-export const helloWorld = functions.https.onCall((data, context) => {
-    return { data: "Hellow from Cloud Functions!!!" };
-});
-
 export const getUserData = functions.https.onCall(async (data, context) => {
     if (!context.auth) {
         return {
@@ -313,56 +304,23 @@ export const addMessage = functions.https.onCall(async (data, context) => {
     return { "success": snapshot.id };
 });
 
-export const onNewOrder = functions.firestore.document("companies/QFZGXJuTGPNyAMq7okrL/orders/{orderId}").onCreate(async (snapshot, context) => {
+export const onNewOrder = functions.firestore.document("/orders/{orderId}").onCreate(async (snapshot, context) => {
     const orderId = context.params.orderId;
-    // let admins: string[] = [];
-    // const querySnapshot = await admin.firestore().collection("users").where('companiesAdmin', 'array-contains', "QFZGXJuTGPNyAMq7okrL").get();
-    // const admins = querySnapshot.docs.map(doc => doc.id);
-    // const documentSnapshot = await admin.firestore().collection("companies").doc('QFZGXJuTGPNyAMq7okrL').collection('admins').get();
-    // let data = ds.data();
-    // let interested: Map<string, boolean> = data["interested"];
-    // console.log(Array.from(interested.keys());
-    // console.log(interested);
+    
+    const querySnapshot = await admin.firestore().collection("admins").get();
 
-    // const safeObject = documentSnapshot.data() || []; // because it might be undefined
-    // let docMap: Map<string, object> = new Map(Object.entries(safeObject));
-    // const querySnapshot = await admin.firestore().collection("companies").doc('QFZGXJuTGPNyAMq7okrL').collection('admins').get();
-    // admins = querySnapshot.docs.map(doc => doc.id);
-
-    // admins = docMap.admins;//.data().admins;
-
-    type Company = {
-        admins: string[] | undefined;
-    };
-
-    const converter = {
-        toFirestore: (data: Company) => data,
-        fromFirestore: (snap: FirebaseFirestore.QueryDocumentSnapshot) =>
-            snap.data() as Company
-    }
-    const documentSnapshot = await admin.firestore().collection("companies").withConverter(converter).doc('QFZGXJuTGPNyAMq7okrL').get();
-
-    const company = documentSnapshot.data()
-
-    let admins = company?.admins as string[];
+    const admins = querySnapshot.docs.map(doc => doc.id);
 
     let adminsTokens: string[] = [];
-    for (let i = 0; i < admins.length; i++) {
+    for(let i = 0; i < admins.length; i++){
         const tokensAdmin: string[] = await getDeviceTokens(admins[i]);
         adminsTokens = adminsTokens.concat(tokensAdmin);
-
-        if (tokensAdmin !== null) {
-            const payload = getNotificationObject("Novo Pedido",
-                "Nova venda realizada. Pedido: " + orderId,
-                "onNewOrder");
-            await admin.firestore().collection("users").doc(admins[i]).collection("notifications").add(payload);
-        }
     }
+
     await sendPushFCM(
         adminsTokens,
-        "Novo Pedido",
-        "Nova venda realizada. Pedido: " + orderId,
-        "onNewOrder"
+        'Novo Pedido',
+        'Nova venda realizada. Pedido: ' + orderId
     );
 });
 
@@ -373,30 +331,22 @@ const orderStatus = new Map([
     [3, "Entregue"]
 ])
 
-export const onOrderStatusChanged = functions.firestore.document("companies/QFZGXJuTGPNyAMq7okrL/orders/{orderId}").onUpdate(async (snapshot, context) => {
+export const onOrderStatusChanged = functions.firestore.document("/orders/{orderId}").onUpdate(async (snapshot, context) => {
     const beforeStatus = snapshot.before.data().status;
     const afterStatus = snapshot.after.data().status;
 
-    if (beforeStatus !== afterStatus) {
+    if(beforeStatus !== afterStatus){
         const tokensUser = await getDeviceTokens(snapshot.after.data().user)
-
-        if (tokensUser !== null) {
-            const payload = getNotificationObject("Pedido: " + context.params.orderId,
-                "Status atualizado para: " + orderStatus.get(afterStatus),
-                "onOrderStatusChanged");
-            await admin.firestore().collection("users").doc(snapshot.after.data().user).collection("notifications").add(payload);
-        }
 
         await sendPushFCM(
             tokensUser,
-            "Pedido: " + context.params.orderId,
-            "Status atualizado para: " + orderStatus.get(afterStatus),
-            "onOrderStatusChanged"
+            'Pedido: ' + context.params.orderId,
+            'Status atualizado para: ' + orderStatus.get(afterStatus),
         )
     }
 });
 
-async function getDeviceTokens(uid: string) {
+async function getDeviceTokens(uid: string){
     const querySnapshot = await admin.firestore().collection("users").doc(uid).collection("tokens").get();
 
     const tokens = querySnapshot.docs.map(doc => doc.id);
@@ -404,29 +354,102 @@ async function getDeviceTokens(uid: string) {
     return tokens;
 }
 
-async function getNotificationObject(title: string, message: string, notificationType: string) {
-    const payload = {
-        notification: {
-            title: title,
-            body: message,
-            notificationType: notificationType,
-            click_action: "FLUTTER_NOTIFICATION_CLICK"
-        }
-    };
-    return payload;
-}
-
-async function sendPushFCM(tokens: string[], title: string, message: string, notificationType: string) {
-    if (tokens.length > 0) {
+async function sendPushFCM(tokens: string[], title: string, message: string){
+    if(tokens.length > 0){
         const payload = {
             notification: {
                 title: title,
                 body: message,
-                notificationType: notificationType,
-                click_action: "FLUTTER_NOTIFICATION_CLICK"
+                click_action: 'FLUTTER_NOTIFICATION_CLICK'
             }
         };
         return admin.messaging().sendToDevice(tokens, payload);
     }
     return;
 }
+
+// export const onNewOrder = functions.firestore.document("/orders/{orderId}").onCreate(async (snapshot, context) => {
+//     const orderId = context.params.orderId;
+
+//     const querySnapshot = await admin.firestore().collection("admins").get();
+
+//     const admins = querySnapshot.docs.map(doc => doc.id);
+
+//     let adminsTokens: string[] = [];
+//     for (let i = 0; i < admins.length; i++) {
+//         const tokensAdmin: string[] = await getDeviceTokens(admins[i]);
+//         adminsTokens = adminsTokens.concat(tokensAdmin);
+//     }
+
+//     await sendPushFCM(
+//         adminsTokens,
+//         "Novo Pedido",
+//         "Nova venda realizada. Pedido: " + orderId,
+//         "onNewOrder"
+//     );
+// });
+
+// const orderStatus = new Map([
+//     [0, "Cancelado"],
+//     [1, "Em Preparação"],
+//     [2, "Em Transporte"],
+//     [3, "Entregue"]
+// ])
+
+// export const onOrderStatusChanged = functions.firestore.document("orders/{orderId}").onUpdate(async (snapshot, context) => {
+//     const beforeStatus = snapshot.before.data().status;
+//     const afterStatus = snapshot.after.data().status;
+
+//     if (beforeStatus !== afterStatus) {
+//         const tokensUser = await getDeviceTokens(snapshot.after.data().user)
+
+//         if (tokensUser !== null) {
+//             const payload = getNotificationObject("Pedido: " + context.params.orderId,
+//                 "Status atualizado para: " + orderStatus.get(afterStatus),
+//                 "onOrderStatusChanged");
+//             await admin.firestore().collection("users").doc(snapshot.after.data().user).collection("notifications").add(payload);
+//         }
+
+//         await sendPushFCM(
+//             tokensUser,
+//             "Pedido: " + context.params.orderId,
+//             "Status atualizado para: " + orderStatus.get(afterStatus),
+//             "onOrderStatusChanged"
+//         )
+//     }
+// });
+
+// async function getDeviceTokens(uid: string) {
+//     const querySnapshot = await admin.firestore().collection("users").doc(uid).collection("tokens").get();
+
+//     const tokens = querySnapshot.docs.map(doc => doc.id);
+
+//     return tokens;
+// }
+
+// async function getNotificationObject(title: string, message: string, notificationType: string) {
+//     const payload = {
+//         notification: {
+//             title: title,
+//             body: message,
+//             notificationType: notificationType,
+//             click_action: "FLUTTER_NOTIFICATION_CLICK"
+//         }
+//     };
+//     return payload;
+// }
+
+// async function sendPushFCM(tokens: string[], title: string, message: string, notificationType: string) {
+//     if (tokens.length > 0) {
+//         const payload = {
+//             notification: {
+//                 title: title,
+//                 body: message,
+//                 notificationType: notificationType,
+//                 click_action: "FLUTTER_NOTIFICATION_CLICK"
+//             }
+//         };
+//         return admin.messaging().sendToDevice(tokens, payload);
+//     }
+//     return;
+// }

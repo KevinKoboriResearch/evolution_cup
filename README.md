@@ -18,11 +18,11 @@ samples, guidance on mobile development, and a full API reference.
 # MerchantId
 e4830421-0acb-46f7-a770-8752c0a2cc1c
 745973f3-3a12-4dc7-b109-447a72a3b8d4
+firebase functions:config:set cielo.merchantid="e4830421-0acb-46f7-a770-8752c0a2cc1c"
+
 # MerchantKey
 ZGIGACBWHTBWJAUIMIWWWNWOOPDSKVUSHYUMUQAU
 EGWPRKIFCRGHBUYWPPLPNXSOGIOGKBWFLCBVQPCP
+firebase functions:config:set cielo.merchantkey="ZGIGACBWHTBWJAUIMIWWWNWOOPDSKVUSHYUMUQAU"
 
 # evolution_cup
-
-# CIELO FAKE CARD
-4220 1111 1111 1111

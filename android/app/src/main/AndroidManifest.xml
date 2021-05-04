@@ -1,5 +1,4 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
     package="com.evolution.cup">
     <!-- io.flutter.app.FlutterApplication is an android.app.Application that
          calls FlutterMain.startInitialization(this); in its onCreate method.
@@ -12,7 +11,7 @@ xmlns:tools="http://schemas.android.com/tools"
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="Evolution Cup"
+        android:label="evolutioncup"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
@@ -59,7 +58,7 @@ xmlns:tools="http://schemas.android.com/tools"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
-        <!-- <meta-data android:name="com.facebook.sdk.ApplicationId"
+        <meta-data android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"/>
 
         <activity android:name="com.facebook.FacebookActivity"
@@ -76,17 +75,6 @@ xmlns:tools="http://schemas.android.com/tools"
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
-        </activity> -->
-        
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.com.shekarmudaliyar.social_share"
-            android:exported="false"
-            android:grantUriPermissions="true"
-            tools:replace="android:authorities">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/filepaths" />
-        </provider>
+        </activity>
     </application>
 </manifest>
